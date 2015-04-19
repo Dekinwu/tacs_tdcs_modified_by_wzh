@@ -27,7 +27,7 @@ TypeViolation=1
 UnspecRange=1
 ActionState=1
 [DebugChecksum]
-Checksum=-861848456
+Checksum=-1111709640
 [State Storage]
 Control Register=0
 [Sequencer]
@@ -53,6 +53,15 @@ Exclusions=
 Buffer=BAAAAAAADAAAAAAAAAAAAAAA
 [NumberOfSequencerBp]
 Number=4
+[EEM Sequencer]
+Buffer=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+[Log file]
+LoggingEnabled=_ 0
+LogFile=_ ""
+Category=_ 0
+[TermIOLog]
+LoggingEnabled=_ 0
+LogFile=_ ""
 [Breakpoints]
 Count=0
 [FET]
@@ -75,17 +84,10 @@ SP=0
 SR=0
 all registers=0
 File name=
-[Log file]
-LoggingEnabled=_ 0
-LogFile=_ ""
-Category=_ 0
-[TermIOLog]
-LoggingEnabled=_ 0
-LogFile=_ ""
 [Aliases]
-A0=_ "E:\game\电流理疗仪\新版11\main.c" "C:\Documents and Settings\Administrator\桌面\bjdd\新版11\main.c"
-A1=_ "E:\game\电流理疗仪\新版201406025\main.c" "C:\Documents and Settings\Administrator\桌面\bjdd\新版20140707\main.c"
-A2=_ "E:\game\电流理疗仪\新版\main.c" "C:\Documents and Settings\Administrator\桌面\bjdd\新版\main.c"
-A3=_ "F:\课题\硬件设计\微电流设备V1.1\正弦波版本\新版20141204\main.c" ""
+A0=_ "E:\game\电流理疗仪\电流理疗仪----20141128\复件 新版20140807\main.c" "E:\game\电流理疗仪\电流理疗仪----20141128\新版20141204\main.c"
+A1=_ "E:\game\电流理疗仪\新版11\main.c" "C:\Documents and Settings\Administrator\桌面\bjdd\新版11\main.c"
+A2=_ "E:\game\电流理疗仪\新版201406025\main.c" "C:\Documents and Settings\Administrator\桌面\bjdd\新版20140707\main.c"
+A3=_ "E:\game\电流理疗仪\新版\main.c" "C:\Documents and Settings\Administrator\桌面\bjdd\新版\main.c"
 Count=4
 SuppressDialog=0

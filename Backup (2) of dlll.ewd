@@ -203,7 +203,7 @@
         </option>
         <option>
           <name>CRadioProtocolType</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCRadioModuleTypeSlave</name>
@@ -223,12 +223,12 @@
         </option>
         <option>
           <name>UsbComPort</name>
-          <state>20121029m</state>
+          <state>COM4</state>
         </option>
         <option>
           <name>FetConnection</name>
           <version>2</version>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>SoftwareBreakpointEnable</name>
