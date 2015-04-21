@@ -3,9 +3,9 @@
 #include<string.h>
 #include "st7565r.h"
 #include "hzconf.h"
-
+#include "config.h"
 #pragma pack(1)
-#define   WAVE_ZERO           682
+//#define   WAVE_ZERO           682
 #define   KEY_FRE             1
 #define   KEY_AMP             2  
 #define   KEY_DUTYCYCLE       3
@@ -18,7 +18,7 @@ uint sinpx[SIN_SAMPLE_NUM];
 uint sin_num;
 uint wave_zero;
 
-signed int wavefrequency;      //波形频率
+float wavefrequency;      //波形频率
 signed int waveamplitude;       //波形幅值             
 //float waveamplitude_ff;
 unsigned int fsm_state;
@@ -41,7 +41,7 @@ unsigned char wdt_flag;
 void Use_High_Frequency_Clock(void);
 void Use_Low_Frequency_Clock(void);
 void DAC12_init(void);
-uint ADC12_voltage_check(void);
+//uint ADC12_voltage_check(void);
 void timerA_init(unsigned int ssA_count);
 void timerB_init(unsigned int ssB_count);
 void Delay_ms(unsigned int n);
@@ -61,6 +61,10 @@ void read_fre_data(uint address, uchar num, uchar *pointer);
 float ordination(uint *buffer_p, uint n);
 void wdt_second_handle(void);
 void Sin_Waveform_set_function(void);
+void display_fm_activity(void);
+void display_am_activity(void);
+void display_stim_activity(void);
+void display_sham_activity(void);
 
  void main(void)
 {
@@ -80,21 +84,14 @@ void Sin_Waveform_set_function(void);
 
    ClearlcdRAM();
    display_fm_activity();  //显示频率界面
-  /* PrintGB(0,0,(unsigned char*)fu_hz);   
-   PrintGB(16,0,(unsigned char*)zhi_hz);
-   display_waveamplitude(waveamplitude);
- 
-   PrintGB(0,2,(unsigned char*)pin_hz);
-   PrintGB(16,2,(unsigned char*)lv_hz);
-   display_wavefrequency(wavefrequency);
-  */ 
+
    Sin_Waveform_set_function();
   
    while(1)
    { 
-     // display_shuxian();
-     if(fsm_state=STIM_STAT) 
+     if(fsm_state==STIM_STA) 
      {
+        TACCTL0 = CCIE; 
         if(timing_flag_interrupt) //正弦波输出
         {
             DAC12_0DAT = (uint)(WAVE_ZERO + sinpx[sin_num++]);
@@ -112,26 +109,14 @@ void Sin_Waveform_set_function(void)
   for(uint i=0;i<SIN_SAMPLE_NUM;i++)
      sinpx[i] = (uint)(waveamplitude_ff*(ucArray_Sin[i]));
   timerA_init((unsigned int)(TIMER_CLOCK_DEV/wavefrequency));
+  TACCTL0 &=~ CCIE;  //设定时默认不输出
+   //DAC12_0DAT = WAVE_ZERO;
 }
 
 
 void display_fm_activity(void)
 {
-   PrintGB(0,0,(unsigned char*)fu_hz);   
-   PrintGB(16,0,(unsigned char*)zhi_hz);
-   display_waveamplitude(waveamplitude);
- 
-   PrintGB(0,2,(unsigned char*)pin_hz);
-   PrintGB(16,2,(unsigned char*)lv_hz);
-   display_wavefrequency(wavefrequency);
-   
-   PrintASCII(116,0,(unsigned char*)ASCII_SHUXIAN);
-   PrintASCII(116,2,(unsigned char*)ASCII_KONG);
-}
-
-
-void display_am_activity(void)
-{
+   ClearlcdRAM();
    PrintGB(0,0,(unsigned char*)fu_hz);   
    PrintGB(16,0,(unsigned char*)zhi_hz);
    display_waveamplitude(waveamplitude);
@@ -145,15 +130,39 @@ void display_am_activity(void)
 }
 
 
+void display_am_activity(void)
+{
+   ClearlcdRAM();
+   PrintGB(0,0,(unsigned char*)fu_hz);   
+   PrintGB(16,0,(unsigned char*)zhi_hz);
+   display_waveamplitude(waveamplitude);
+ 
+   PrintGB(0,2,(unsigned char*)pin_hz);
+   PrintGB(16,2,(unsigned char*)lv_hz);
+   display_wavefrequency(wavefrequency);
+   
+   PrintASCII(116,0,(unsigned char*)ASCII_SHUXIAN);
+   PrintASCII(116,2,(unsigned char*)ASCII_KONG);
+}
+
+
 void display_sham_activity(void)
 {
-   
+   ClearlcdRAM();
+   PrintASCII(24,2,(unsigned char*)ASCII_S);
+   PrintASCII(32,2,(unsigned char*)ASCII_H);
+   PrintASCII(40,2,(unsigned char*)ASCII_A);
+   PrintASCII(48,2,(unsigned char*)ASCII_M);
 }
 
 
 void display_stim_activity(void)
 {
-   
+   ClearlcdRAM();
+   PrintASCII(24,2,(unsigned char*)ASCII_S);
+   PrintASCII(32,2,(unsigned char*)ASCII_T);
+   PrintASCII(40,2,(unsigned char*)ASCII_I);
+   PrintASCII(48,2,(unsigned char*)ASCII_M);
 }
 
 void display_ascii(unsigned char num,unsigned char x,unsigned char y)
@@ -176,72 +185,41 @@ void display_ascii(unsigned char num,unsigned char x,unsigned char y)
 
 void display_wavefrequency(float fre)
 {
-   float tp;
-   uint fre_h,fre_l;
-   uint free;
-   free = (unsigned int)fre;
-   tp = (float)fre;
-   if(tp == 0.5)
-   {
-      PrintASCII(32,2,(unsigned char*)ASCII_KONG);
-      PrintASCII(40,2,(unsigned char*)ASCII_KONG);
-      PrintASCII(48,2,(unsigned char*)ASCII_KONG);
-      
-      PrintASCII(56,2,(unsigned char*)ASCII_0);
-      PrintASCII(64,2,(unsigned char*)ASCII_DIAN);
-      PrintASCII(72,2,(unsigned char*)ASCII_5);
-      
-      
-      PrintASCII(80,2,(unsigned char*)ASCII_H);
-      PrintASCII(88,2,(unsigned char*)ASCII_z);
-      
-      PrintASCII(96,2,(unsigned char*)ASCII_KONG);
-      PrintASCII(104,2,(unsigned char*)ASCII_KONG);
-      PrintASCII(112,2,(unsigned char*)ASCII_KONG);
-      PrintASCII(120,2,(unsigned char*)ASCII_KONG);
-      PrintASCII(124,2,(unsigned char*)ASCII_KONG);
-   }
-   else
-   {
-      fre_h = free/10;
-      fre_l = free%10;
-      PrintASCII(32,2,(unsigned char*)ASCII_KONG);
-      PrintASCII(40,2,(unsigned char*)ASCII_KONG);
-      PrintASCII(48,2,(unsigned char*)ASCII_KONG);
-      if(fre_h == 0)PrintASCII(56,2,(unsigned char*)ASCII_KONG);
-      else display_ascii(fre_h,56,2);
-      display_ascii(fre_l,64,2);
-      
-      PrintASCII(72,2,(unsigned char*)ASCII_H);
-      PrintASCII(80,2,(unsigned char*)ASCII_z);
-      PrintASCII(88,2,(unsigned char*)ASCII_KONG);
-      PrintASCII(96,2,(unsigned char*)ASCII_KONG);
-      PrintASCII(104,2,(unsigned char*)ASCII_KONG);
-      PrintASCII(112,2,(unsigned char*)ASCII_KONG);
-      PrintASCII(120,2,(unsigned char*)ASCII_KONG);
-      PrintASCII(124,2,(unsigned char*)ASCII_KONG);
-   }
+    float tp;
+    uint fre_h,fre_l;
+    uint free;
+    free = (unsigned int)fre;
+    tp = fre-free;
+   /*显示整数部分*/
+    fre_h = free/10;
+    fre_l = free%10;
+    PrintASCII(48,2,(unsigned char*)ASCII_KONG);
+    if(fre_h == 0) PrintASCII(56,2,(unsigned char*)ASCII_KONG);
+    else display_ascii(fre_h,56,2);
+    display_ascii(fre_l,64,2);
+    PrintASCII(72,2,(unsigned char*)ASCII_DIAN);
+    if(tp!=0)  display_ascii((unsigned int)(tp*10),80,2);
+    else  display_ascii(0,80,2);//
+    
+    PrintASCII(88,2,(unsigned char*)ASCII_H);
+    PrintASCII(96,2,(unsigned char*)ASCII_z);
+  
+    PrintASCII(104,2,(unsigned char*)ASCII_KONG);
+    PrintASCII(112,2,(unsigned char*)ASCII_KONG);
+
 }
 
 void display_waveamplitude(float amp)
 {
    uint amp_h,amp_l;
    ulong crut; 
-   //crut = (ulong)((((amp+2047.5)*30.0/4095.0)-15.0)*100.0) + 10;
-   crut=amp;
+   crut=(uint)amp;
+   PrintASCII(48,2,(unsigned char*)ASCII_KONG);
    if(crut >= 1000)
    {
-      PrintASCII(32,0,(unsigned char*)ASCII_KONG);
-      PrintASCII(40,0,(unsigned char*)ASCII_1);
-      PrintASCII(48,0,(unsigned char*)ASCII_0);
-      PrintASCII(56,0,(unsigned char*)ASCII_0);
-      
-      display_ascii(0,64,0);
-      PrintASCII(72,0,(unsigned char*)ASCII_u);
-      PrintASCII(80,0,(unsigned char*)ASCII_A);
-      
-      PrintASCII(96,0,(unsigned char*)ASCII_KONG);
-      PrintASCII(104,0,(unsigned char*)ASCII_KONG);
+      PrintASCII(56,0,(unsigned char*)ASCII_1);
+      PrintASCII(64,0,(unsigned char*)ASCII_0);
+      PrintASCII(72,0,(unsigned char*)ASCII_0); 
    }
    else
    {
@@ -249,25 +227,21 @@ void display_waveamplitude(float amp)
       amp_h = crut/10;
       amp_l = crut%10;
       
-      PrintASCII(32,0,(unsigned char*)ASCII_KONG);
-      PrintASCII(40,0,(unsigned char*)ASCII_KONG);
+      PrintASCII(56,0,(unsigned char*)ASCII_KONG);
       if(amp_h == 0)
-         PrintASCII(48,0,(unsigned char*)ASCII_KONG);
+         PrintASCII(66,0,(unsigned char*)ASCII_KONG);
       else
-         display_ascii(amp_h,48,0);
+         display_ascii(amp_h,66,0);
       if(amp_l == 0 && amp_h == 0)
-         PrintASCII(56,0,(unsigned char*)ASCII_KONG);
+         PrintASCII(72,0,(unsigned char*)ASCII_KONG);
       else
-         display_ascii(amp_l,56,0);
-      
-      
-      display_ascii(0,64,0);
-      PrintASCII(72,0,(unsigned char*)ASCII_u);
-      PrintASCII(80,0,(unsigned char*)ASCII_A);
-      
-      PrintASCII(96,0,(unsigned char*)ASCII_KONG);
-      PrintASCII(104,0,(unsigned char*)ASCII_KONG);
-   }
+         display_ascii(amp_l,72,0);
+   }  
+      display_ascii(0,80,0);
+      PrintASCII(88,0,(unsigned char*)ASCII_u);
+      PrintASCII(96,0,(unsigned char*)ASCII_A);
+      PrintASCII(104,2,(unsigned char*)ASCII_KONG);
+      PrintASCII(112,2,(unsigned char*)ASCII_KONG);
 }
 
 
@@ -428,7 +402,7 @@ __interrupt void Port_1(void)
 
    Sin_Waveform_set_function();
    TACCTL0 &=~ CCIE;
-   DAC12_0DAT = 2047;
+   DAC12_0DAT = WAVE_ZERO;
    P1IFG = 0; // 清除中断请求位
 }
 
@@ -468,7 +442,7 @@ __interrupt void Port_2(void)
  
    }
    TACCTL0 &=~ CCIE;
-   DAC12_0DAT = 2047;
+   DAC12_0DAT = WAVE_ZERO;
    P2IFG = 0; // 清除中断请求位
 }
 
