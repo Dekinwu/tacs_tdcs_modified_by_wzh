@@ -27,7 +27,7 @@ TypeViolation=1
 UnspecRange=1
 ActionState=1
 [DebugChecksum]
-Checksum=1371819063
+Checksum=-1392508355
 [State Storage]
 Control Register=0
 [Sequencer]
@@ -55,15 +55,9 @@ Buffer=BAAAAAAADAAAAAAAAAAAAAAA
 Number=4
 [EEM Sequencer]
 Buffer=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-[Log file]
-LoggingEnabled=_ 0
-LogFile=_ ""
-Category=_ 0
-[TermIOLog]
-LoggingEnabled=_ 0
-LogFile=_ ""
 [Breakpoints]
-Count=0
+Bp0=_ "STD_CODE" "{$PROJ_DIR$\main.c}.76.13" 1 0 0 0 "" 0 ""
+Count=1
 [FET]
 Clock mode=46
 Extended Clock mode=65535
@@ -84,6 +78,13 @@ SP=0
 SR=0
 all registers=0
 File name=
+[Log file]
+LoggingEnabled=_ 0
+LogFile=_ ""
+Category=_ 0
+[TermIOLog]
+LoggingEnabled=_ 0
+LogFile=_ ""
 [Aliases]
 A0=_ "E:\game\电流理疗仪\电流理疗仪----20141128\复件 新版20140807\main.c" "E:\game\电流理疗仪\电流理疗仪----20141128\新版20141204\main.c"
 A1=_ "E:\game\电流理疗仪\新版11\main.c" "C:\Documents and Settings\Administrator\桌面\bjdd\新版11\main.c"
